@@ -1,12 +1,17 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, Users, Map, BarChart3, Menu, X, Route } from 'lucide-react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Users, Map, BarChart3, Menu, X, Route, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import classNames from 'classnames';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Layout: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { showToast } = useToast();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -18,6 +23,18 @@ const Layout: React.FC = () => {
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      showToast('Disconnesso con successo', 'success');
+      navigate('/login');
+      setMenuOpen(false);
+    } catch (error) {
+      console.error('Errore durante il logout:', error);
+      showToast('Errore durante la disconnessione', 'error');
+    }
   };
 
   const navItems = [
@@ -44,7 +61,7 @@ const Layout: React.FC = () => {
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <nav className="hidden md:flex space-x-6">
+          <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -61,6 +78,18 @@ const Layout: React.FC = () => {
                 <span>{item.label}</span>
               </Link>
             ))}
+            {user && (
+              <>
+                <span className="text-white text-sm px-3">{user.email}</span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 py-2 px-3 rounded-md transition-colors text-red-500 hover:bg-red-50 hover:text-red-600"
+                >
+                  <LogOut size={20} />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -86,6 +115,21 @@ const Layout: React.FC = () => {
                 <span className="font-medium">{item.label}</span>
               </Link>
             ))}
+            {user && (
+              <>
+                <div className="border-t border-gray-200 my-2"></div>
+                <div className="py-2 px-4 text-sm text-gray-600">
+                  {user.email}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-3 py-3 px-4 rounded-md transition-colors text-red-600 hover:bg-red-50 font-medium"
+                >
+                  <LogOut size={20} />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
           </nav>
         </div>
       )}
