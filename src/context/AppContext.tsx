@@ -62,7 +62,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         id: p.id,
         name: p.name,
         surname: p.surname || '',
-        role: p.role,
+        isDocente: p.is_docente || false,
+        isAmministratore: p.is_amministratore || false,
+        isDipendente: p.is_dipendente || false,
         email: p.email,
         phone: p.phone,
         homeAddress: p.home_address
@@ -132,7 +134,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       .insert([{
         name: person.name,
         surname: person.surname,
-        role: person.role,
+        is_docente: person.isDocente,
+        is_amministratore: person.isAmministratore,
+        is_dipendente: person.isDipendente,
         email: person.email,
         phone: person.phone,
         home_address: person.homeAddress
@@ -148,7 +152,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         id: data.id,
         name: data.name,
         surname: data.surname,
-        role: data.role,
+        isDocente: data.is_docente || false,
+        isAmministratore: data.is_amministratore || false,
+        isDipendente: data.is_dipendente || false,
         email: data.email,
         phone: data.phone,
         homeAddress: data.home_address
@@ -162,7 +168,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       .update({
         name: person.name,
         surname: person.surname,
-        role: person.role,
+        is_docente: person.isDocente,
+        is_amministratore: person.isAmministratore,
+        is_dipendente: person.isDipendente,
         email: person.email,
         phone: person.phone,
         home_address: person.homeAddress

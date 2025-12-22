@@ -13,7 +13,9 @@ import { v4 as uuidv4 } from 'uuid';
 interface PersonFormData {
   name: string;
   surname: string;
-  role: Role;
+  isDocente: boolean;
+  isAmministratore: boolean;
+  isDipendente: boolean;
   email: string;
   phone: string;
   homeAddress: string;
@@ -29,7 +31,7 @@ interface VehicleFormData {
 interface PersonFormErrors {
   name?: string;
   surname?: string;
-  role?: string;
+  roles?: string;
 }
 
 interface VehicleFormErrors {
@@ -38,12 +40,6 @@ interface VehicleFormErrors {
   plate?: string;
   reimbursementRate?: string;
 }
-
-const roleOptions = [
-  { value: 'docente', label: 'Docente' },
-  { value: 'dipendente', label: 'Dipendente' },
-  { value: 'amministratore', label: 'Amministratore' },
-];
 
 const PersonForm: React.FC = () => {
   const { id } = useParams();
@@ -58,7 +54,9 @@ const PersonForm: React.FC = () => {
   const [personFormData, setPersonFormData] = useState<PersonFormData>({
     name: '',
     surname: '',
-    role: 'docente',
+    isDocente: false,
+    isAmministratore: false,
+    isDipendente: false,
     email: '',
     phone: '',
     homeAddress: '',
@@ -81,7 +79,9 @@ const PersonForm: React.FC = () => {
       setPersonFormData({
         name: person.name,
         surname: person.surname,
-        role: person.role,
+        isDocente: person.isDocente,
+        isAmministratore: person.isAmministratore,
+        isDipendente: person.isDipendente,
         email: person.email || '',
         phone: person.phone || '',
         homeAddress: person.homeAddress || '',
@@ -100,8 +100,8 @@ const PersonForm: React.FC = () => {
       newErrors.surname = 'Il cognome è obbligatorio';
     }
 
-    if (!personFormData.role) {
-      newErrors.role = 'Il ruolo è obbligatorio';
+    if (!personFormData.isDocente && !personFormData.isAmministratore && !personFormData.isDipendente) {
+      newErrors.roles = 'Seleziona almeno un ruolo';
     }
 
     setPersonErrors(newErrors);
@@ -142,8 +142,12 @@ const PersonForm: React.FC = () => {
   };
 
   const handlePersonChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setPersonFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setPersonFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleVehicleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,7 +165,9 @@ const PersonForm: React.FC = () => {
     const personData = {
       name: personFormData.name,
       surname: personFormData.surname,
-      role: personFormData.role as Role,
+      isDocente: personFormData.isDocente,
+      isAmministratore: personFormData.isAmministratore,
+      isDipendente: personFormData.isDipendente,
       email: personFormData.email || undefined,
       phone: personFormData.phone || undefined,
       homeAddress: personFormData.homeAddress || undefined,
@@ -319,16 +325,46 @@ const PersonForm: React.FC = () => {
             />
           </div>
 
-          <Select
-            id="role"
-            name="role"
-            label="Ruolo"
-            options={roleOptions}
-            value={personFormData.role}
-            onChange={handlePersonChange}
-            error={personErrors.role}
-            required
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ruoli <span className="text-red-500">*</span>
+            </label>
+            <div className="space-y-3">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isDocente"
+                  checked={personFormData.isDocente}
+                  onChange={handlePersonChange}
+                  className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Docente</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isAmministratore"
+                  checked={personFormData.isAmministratore}
+                  onChange={handlePersonChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Amministratore</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isDipendente"
+                  checked={personFormData.isDipendente}
+                  onChange={handlePersonChange}
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Dipendente</span>
+              </label>
+            </div>
+            {personErrors.roles && (
+              <p className="mt-2 text-sm text-red-600">{personErrors.roles}</p>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input

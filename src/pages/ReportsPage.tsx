@@ -10,11 +10,14 @@ import { generatePDF } from '../utils/pdfGenerator';
 
 const ReportsPage: React.FC = () => {
   const { state, generateMonthlyReport, getPerson, getVehicle, formatDate } = useAppContext();
-  
+
   const [selectedPerson, setSelectedPerson] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth().toString());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [report, setReport] = useState<any>(null);
+  const [filterDocenti, setFilterDocenti] = useState(true);
+  const [filterAmministratori, setFilterAmministratori] = useState(true);
+  const [filterDipendenti, setFilterDipendenti] = useState(true);
 
   // Generate month options
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({
@@ -28,6 +31,16 @@ const ReportsPage: React.FC = () => {
     value: (currentYear - i).toString(),
     label: (currentYear - i).toString(),
   }));
+
+  // Filter people by selected roles
+  const filteredPeople = state.people.filter(person => {
+    if (!filterDocenti && !filterAmministratori && !filterDipendenti) return true;
+    return (
+      (filterDocenti && person.isDocente) ||
+      (filterAmministratori && person.isAmministratore) ||
+      (filterDipendenti && person.isDipendente)
+    );
+  });
 
   const handleGenerateReport = () => {
     if (!selectedPerson) return;
@@ -129,15 +142,56 @@ const ReportsPage: React.FC = () => {
       <Card>
         <div className="mb-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Genera Report Mensile</h2>
-          
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Filtra per Ruolo
+            </label>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filterDocenti}
+                  onChange={(e) => setFilterDocenti(e.target.checked)}
+                  className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Docenti</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filterAmministratori}
+                  onChange={(e) => setFilterAmministratori(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Amministratori</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filterDipendenti}
+                  onChange={(e) => setFilterDipendenti(e.target.checked)}
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <span className="ml-2 text-sm text-gray-700">Dipendenti</span>
+              </label>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select
               id="personId"
               label="Seleziona Persona"
-              options={state.people.map(p => ({ 
-                value: p.id, 
-                label: `${p.name} ${p.surname} (${p.role})` 
-              }))}
+              options={filteredPeople.map(p => {
+                const roles = [];
+                if (p.isDocente) roles.push('D');
+                if (p.isAmministratore) roles.push('A');
+                if (p.isDipendente) roles.push('Dip');
+                return {
+                  value: p.id,
+                  label: `${p.name} ${p.surname} (${roles.join(', ')})`
+                };
+              })}
               value={selectedPerson}
               onChange={(e) => setSelectedPerson(e.target.value)}
             />

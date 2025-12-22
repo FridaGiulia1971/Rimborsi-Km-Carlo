@@ -22,14 +22,10 @@ const PeoplePage: React.FC = () => {
     (person) =>
       person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       person.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.role.toLowerCase().includes(searchTerm.toLowerCase())
+      (searchTerm.toLowerCase().includes('docent') && person.isDocente) ||
+      (searchTerm.toLowerCase().includes('amministrat') && person.isAmministratore) ||
+      (searchTerm.toLowerCase().includes('dipendent') && person.isDipendente)
   );
-
-  const roleTranslations: Record<string, string> = {
-    'docente': 'Docente',
-    'dipendente': 'Dipendente',
-    'amministratore': 'Amministratore'
-  };
 
   const columns = [
     {
@@ -40,12 +36,26 @@ const PeoplePage: React.FC = () => {
       ),
     },
     {
-      key: 'role',
-      header: 'Ruolo',
+      key: 'roles',
+      header: 'Ruoli',
       render: (person: Person) => (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
-          {roleTranslations[person.role] || person.role}
-        </span>
+        <div className="flex flex-wrap gap-1">
+          {person.isDocente && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+              Docente
+            </span>
+          )}
+          {person.isAmministratore && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              Amministratore
+            </span>
+          )}
+          {person.isDipendente && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Dipendente
+            </span>
+          )}
+        </div>
       ),
     },
     {

@@ -34,9 +34,15 @@ export const generatePDF = (
   doc.setTextColor(0, 0, 0);
   
   const monthName = new Date(report.year, report.month).toLocaleString('it-IT', { month: 'long' });
-  
+
+  const roles = [];
+  if (person.isDocente) roles.push('Docente');
+  if (person.isAmministratore) roles.push('Amministratore');
+  if (person.isDipendente) roles.push('Dipendente');
+  const rolesText = roles.length > 0 ? roles.join(', ') : 'Nessun ruolo';
+
   doc.text(`Persona: ${person.name} ${person.surname}`, 14, 50);
-  doc.text(`Ruolo: ${person.role}`, 14, 58);
+  doc.text(`Ruoli: ${rolesText}`, 14, 58);
   doc.text(`Periodo: ${monthName} ${report.year}`, 14, 66);
   
   // Add summary box
