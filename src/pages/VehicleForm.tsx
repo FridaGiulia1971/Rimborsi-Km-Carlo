@@ -7,10 +7,12 @@ import Input from '../components/Input';
 import Select from '../components/Select';
 import { useAppContext } from '../context/AppContext';
 import { Vehicle } from '../types';
+import { CAR_BRANDS } from '../utils/carBrands';
 
 interface FormData {
   personId: string;
   make: string;
+  customBrand: string;
   model: string;
   plate: string;
   reimbursementRate: string;
@@ -19,6 +21,7 @@ interface FormData {
 interface FormErrors {
   personId?: string;
   make?: string;
+  customBrand?: string;
   model?: string;
   plate?: string;
   reimbursementRate?: string;
@@ -35,6 +38,7 @@ const VehicleForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     personId: '',
     make: '',
+    customBrand: '',
     model: '',
     plate: '',
     reimbursementRate: '0.35',
@@ -44,9 +48,11 @@ const VehicleForm: React.FC = () => {
 
   useEffect(() => {
     if (vehicle) {
+      const isStandardBrand = CAR_BRANDS.includes(vehicle.make as any);
       setFormData({
         personId: vehicle.personId,
-        make: vehicle.make,
+        make: isStandardBrand ? vehicle.make : 'Altra',
+        customBrand: isStandardBrand ? '' : vehicle.make,
         model: vehicle.model,
         plate: vehicle.plate,
         reimbursementRate: vehicle.reimbursementRate.toString(),
@@ -63,6 +69,10 @@ const VehicleForm: React.FC = () => {
 
     if (!formData.make.trim()) {
       newErrors.make = 'La marca è obbligatoria';
+    }
+
+    if (formData.make === 'Altra' && !formData.customBrand.trim()) {
+      newErrors.customBrand = 'Specificare la marca personalizzata';
     }
 
     if (!formData.model.trim()) {
@@ -94,9 +104,11 @@ const VehicleForm: React.FC = () => {
       return;
     }
 
+    const finalMake = formData.make === 'Altra' ? formData.customBrand : formData.make;
+
     const vehicleData = {
       personId: formData.personId,
-      make: formData.make,
+      make: finalMake,
       model: formData.model,
       plate: formData.plate,
       reimbursementRate: parseFloat(formData.reimbursementRate),
@@ -118,6 +130,12 @@ const VehicleForm: React.FC = () => {
   const peopleOptions = state.people.map((person) => ({
     value: person.id,
     label: `${person.name} ${person.surname} (${person.role})`,
+  }));
+
+  // Prepare car brands options for select
+  const carBrandsOptions = CAR_BRANDS.map((brand) => ({
+    value: brand,
+    label: brand,
   }));
 
   return (
@@ -149,10 +167,11 @@ const VehicleForm: React.FC = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
+            <Select
               id="make"
               name="make"
               label="Marca"
+              options={carBrandsOptions}
               value={formData.make}
               onChange={handleChange}
               error={errors.make}
@@ -169,6 +188,19 @@ const VehicleForm: React.FC = () => {
               required
             />
           </div>
+
+          {formData.make === 'Altra' && (
+            <Input
+              id="customBrand"
+              name="customBrand"
+              label="Specifica Marca"
+              value={formData.customBrand}
+              onChange={handleChange}
+              error={errors.customBrand}
+              placeholder="Inserisci il nome della marca"
+              required
+            />
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
