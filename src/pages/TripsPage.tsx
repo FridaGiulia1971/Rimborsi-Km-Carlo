@@ -73,43 +73,47 @@ const TripsPage: React.FC = () => {
     {
       key: 'date',
       header: 'Data',
+      className: 'w-32',
       render: (trip: Trip) => (
-        <span>{formatDate(trip.date)}</span>
+        <span className="whitespace-nowrap">{formatDate(trip.date)}</span>
       ),
     },
     {
       key: 'person',
       header: 'Persona',
+      className: 'w-40',
       render: (trip: Trip) => {
         const person = getPerson(trip.personId);
         return person ? (
-          <span className="font-medium text-gray-900">
+          <span className="font-medium text-gray-900 whitespace-nowrap">
             {person.name} {person.surname}
           </span>
         ) : (
-          <span className="text-red-500">Persona non trovata</span>
+          <span className="text-red-500 whitespace-nowrap">Persona non trovata</span>
         );
       },
     },
     {
       key: 'vehicle',
       header: 'Veicolo',
+      className: 'w-48',
       render: (trip: Trip) => {
         const vehicle = getVehicle(trip.vehicleId);
         return vehicle ? (
-          <span>
+          <span className="whitespace-nowrap">
             {vehicle.make} {vehicle.model} ({vehicle.plate})
           </span>
         ) : (
-          <span className="text-red-500">Veicolo non trovato</span>
+          <span className="text-red-500 whitespace-nowrap">Veicolo non trovato</span>
         );
       },
     },
     {
       key: 'route',
       header: 'Percorso',
+      className: 'max-w-md',
       render: (trip: Trip) => (
-        <span>
+        <span className="block break-words">
           {trip.origin} → {trip.destination}
           {trip.isRoundTrip && <span className="ml-1 text-teal-600">(A/R)</span>}
         </span>
@@ -118,33 +122,35 @@ const TripsPage: React.FC = () => {
     {
       key: 'distance',
       header: 'Km',
+      className: 'w-24',
       render: (trip: Trip) => {
         const distance = trip.isRoundTrip ? trip.distance * 2 : trip.distance;
-        return <span>{distance.toFixed(1)} km</span>;
+        return <span className="whitespace-nowrap">{distance.toFixed(1)} km</span>;
       },
     },
     {
       key: 'toll',
       header: 'Pedaggio',
+      className: 'w-32',
       render: (trip: Trip) => {
         if (trip.hasToll && trip.tollAmount) {
           const toll = trip.isRoundTrip ? trip.tollAmount * 2 : trip.tollAmount;
           return (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 whitespace-nowrap">
               <Banknote size={14} className="text-amber-600" />
               <span className="text-amber-700 font-medium">{toll.toFixed(2)} €</span>
             </div>
           );
         }
-        return <span className="text-gray-400 text-sm">-</span>;
+        return <span className="text-gray-400 text-sm whitespace-nowrap">-</span>;
       },
     },
     {
       key: 'actions',
       header: 'Azioni',
-      className: 'text-right',
+      className: 'text-right w-80',
       render: (trip: Trip) => (
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2 whitespace-nowrap">
           <Button
             variant="info"
             size="sm"

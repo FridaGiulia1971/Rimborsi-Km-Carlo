@@ -57,7 +57,7 @@ function Table<T>({
                 {columns.map((column) => (
                   <td
                     key={`${keyExtractor(item)}-${column.key}`}
-                    className={classNames('px-6 py-4 whitespace-nowrap text-sm text-gray-500', column.className)}
+                    className={classNames('px-6 py-4 text-sm text-gray-500', column.className)}
                   >
                     {column.render
                       ? column.render(item)
@@ -71,7 +71,7 @@ function Table<T>({
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+                className="px-6 py-4 text-sm text-gray-500 text-center"
               >
                 {emptyMessage}
               </td>
