@@ -150,7 +150,7 @@ const TripsPage: React.FC = () => {
       header: 'Azioni',
       className: 'text-right w-32',
       render: (trip: Trip) => (
-        <div className="flex flex-col items-end space-y-2">
+        <div className="flex flex-col items-stretch space-y-2">
           <Button
             variant="info"
             size="sm"
@@ -159,6 +159,7 @@ const TripsPage: React.FC = () => {
               e.stopPropagation();
               navigate(`/tragitti/${trip.id}`);
             }}
+            className="w-full"
           >
             Modifica
           </Button>
@@ -170,6 +171,7 @@ const TripsPage: React.FC = () => {
               e.stopPropagation();
               handleDuplicate(trip);
             }}
+            className="w-full"
           >
             Duplica
           </Button>
@@ -181,6 +183,7 @@ const TripsPage: React.FC = () => {
               e.stopPropagation();
               handleDelete(trip.id);
             }}
+            className="w-full"
           >
             Elimina
           </Button>

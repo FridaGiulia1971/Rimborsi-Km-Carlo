@@ -75,7 +75,7 @@ const PeoplePage: React.FC = () => {
       header: 'Azioni',
       className: 'text-right w-32',
       render: (person: Person) => (
-        <div className="flex flex-col items-end space-y-2">
+        <div className="flex flex-col items-stretch space-y-2">
           <Button
             variant="info"
             size="sm"
@@ -84,6 +84,7 @@ const PeoplePage: React.FC = () => {
               e.stopPropagation();
               navigate(`/persone/${person.id}`);
             }}
+            className="w-full"
           >
             Modifica
           </Button>
@@ -95,6 +96,7 @@ const PeoplePage: React.FC = () => {
               e.stopPropagation();
               handleDelete(person.id);
             }}
+            className="w-full"
           >
             Elimina
           </Button>
