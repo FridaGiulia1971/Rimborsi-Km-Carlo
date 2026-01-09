@@ -100,7 +100,7 @@ export const generatePDF = (
         trip.destination.length > 12 ? trip.destination.substring(0, 12) + '...' : trip.destination,
         vehicle ? `${vehicle.make} ${vehicle.model} (${vehicle.plate})` : 'N/A',
         `${distance.toFixed(1)}`,
-        vehicle ? `${rate.toFixed(4)} €` : '-',
+        vehicle ? `${rate.toFixed(2)} €` : '-',
         `${reimbursement.toFixed(2)} €`,
         toll > 0 ? `${toll.toFixed(2)} €` : '-',
         `${total.toFixed(2)} €`,

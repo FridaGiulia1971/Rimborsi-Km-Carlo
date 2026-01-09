@@ -145,7 +145,7 @@ const ReportsPage: React.FC = () => {
       render: (trip: Trip) => {
         const vehicle = getVehicle(trip.vehicleId);
         if (!vehicle) return <span>-</span>;
-        return <span className="text-gray-700">{vehicle.reimbursementRate.toFixed(4)} €</span>;
+        return <span className="text-gray-700">{vehicle.reimbursementRate.toFixed(2)} €</span>;
       },
     },
     {
