@@ -57,6 +57,8 @@ export interface Trip {
   tollEntryStation?: string; // Casello di entrata
   tollExitStation?: string; // Casello di uscita
   tollAmount?: number; // Importo pedaggio in euro
+  hasMeal?: boolean; // Se questo viaggio include rimborso vitto
+  mealType?: 'pranzo' | 'cena'; // Tipo di pasto: pranzo o cena
 }
 
 export interface MonthlyReport {
@@ -67,6 +69,7 @@ export interface MonthlyReport {
   totalDistance: number;
   totalReimbursement: number;
   totalTollFees: number; // Totale pedaggi del mese
+  totalMealCount: number; // Numero totale di pasti
 }
 
 export interface TollBooth {

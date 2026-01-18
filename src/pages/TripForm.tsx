@@ -30,6 +30,8 @@ interface FormData {
   tollEntryStation: string;
   tollExitStation: string;
   tollAmount: string;
+  hasMeal: boolean;
+  mealType: 'pranzo' | 'cena';
 }
 
 interface FormErrors {
@@ -82,6 +84,8 @@ const TripForm: React.FC = () => {
     tollEntryStation: '',
     tollExitStation: '',
     tollAmount: '',
+    hasMeal: false,
+    mealType: 'pranzo',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -128,6 +132,8 @@ const TripForm: React.FC = () => {
         tollEntryStation: trip.tollEntryStation || '',
         tollExitStation: trip.tollExitStation || '',
         tollAmount: trip.tollAmount ? trip.tollAmount.toString() : '',
+        hasMeal: trip.hasMeal || false,
+        mealType: trip.mealType || 'pranzo',
       });
     }
   }, [trip]);
@@ -180,6 +186,8 @@ const TripForm: React.FC = () => {
         tollEntryStation: duplicateData.tollEntryStation || '',
         tollExitStation: duplicateData.tollExitStation || '',
         tollAmount: duplicateData.tollAmount ? duplicateData.tollAmount.toString() : '',
+        hasMeal: duplicateData.hasMeal || false,
+        mealType: duplicateData.mealType || 'pranzo',
       });
     }
   }, [isDuplicating]);
@@ -470,6 +478,8 @@ const TripForm: React.FC = () => {
       tollEntryStation: formData.hasToll ? formData.tollEntryStation : undefined,
       tollExitStation: formData.hasToll ? formData.tollExitStation : undefined,
       tollAmount: formData.hasToll && formData.tollAmount ? parseFloat(formData.tollAmount) : undefined,
+      hasMeal: formData.hasMeal,
+      mealType: formData.hasMeal ? formData.mealType : undefined,
     };
 
     if (isEditing && trip) {
@@ -875,6 +885,41 @@ const TripForm: React.FC = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-green-50 p-4 rounded-lg border border-green-100 mb-4">
+            <div className="mb-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  id="hasMeal"
+                  name="hasMeal"
+                  type="checkbox"
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  checked={formData.hasMeal}
+                  onChange={handleChange}
+                />
+                <label htmlFor="hasMeal" className="text-sm font-medium text-green-900">
+                  Questo viaggio include rimborso vitto
+                </label>
+              </div>
+            </div>
+
+            {formData.hasMeal && (
+              <div className="space-y-3">
+                <Select
+                  id="mealType"
+                  name="mealType"
+                  label="Tipo di pasto"
+                  options={[
+                    { value: 'pranzo', label: 'Pranzo' },
+                    { value: 'cena', label: 'Cena' }
+                  ]}
+                  value={formData.mealType}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             )}
           </div>

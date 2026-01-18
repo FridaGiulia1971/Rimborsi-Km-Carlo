@@ -60,6 +60,7 @@ const ReportsPage: React.FC = () => {
       let totalDistance = 0;
       let totalReimbursement = 0;
       let totalTollFees = 0;
+      let totalMealCount = 0;
 
       filteredTrips.forEach(trip => {
         const vehicle = getVehicle(trip.vehicleId);
@@ -73,6 +74,10 @@ const ReportsPage: React.FC = () => {
           const tollAmount = trip.isRoundTrip ? trip.tollAmount * 2 : trip.tollAmount;
           totalTollFees += tollAmount;
         }
+
+        if (trip.hasMeal) {
+          totalMealCount += 1;
+        }
       });
 
       reportData = {
@@ -80,7 +85,8 @@ const ReportsPage: React.FC = () => {
         trips: filteredTrips,
         totalDistance,
         totalReimbursement,
-        totalTollFees
+        totalTollFees,
+        totalMealCount
       };
     }
 
@@ -167,6 +173,16 @@ const ReportsPage: React.FC = () => {
         if (trip.hasToll && trip.tollAmount) {
           const toll = trip.isRoundTrip ? trip.tollAmount * 2 : trip.tollAmount;
           return <span className="font-medium text-amber-700">{toll.toFixed(2)} €</span>;
+        }
+        return <span className="text-gray-400">-</span>;
+      },
+    },
+    {
+      key: 'meal',
+      header: 'Vitto',
+      render: (trip: Trip) => {
+        if (trip.hasMeal && trip.mealType) {
+          return <span className="font-medium text-green-700">{trip.mealType === 'pranzo' ? 'Pranzo' : 'Cena'}</span>;
         }
         return <span className="text-gray-400">-</span>;
       },
@@ -311,7 +327,7 @@ const ReportsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                 <div className="flex items-center">
                   <Calendar className="h-8 w-8 text-blue-500 mr-3" />
@@ -355,6 +371,18 @@ const ReportsPage: React.FC = () => {
                     <h3 className="text-sm font-medium text-gray-700">Pedaggi</h3>
                     <p className="text-lg font-semibold text-gray-900">
                       {report.totalTollFees.toFixed(2)} €
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                <div className="flex items-center">
+                  <FileText className="h-8 w-8 text-green-500 mr-3" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700">Rimborsi Vitto</h3>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {report.totalMealCount} pasti
                     </p>
                   </div>
                 </div>
