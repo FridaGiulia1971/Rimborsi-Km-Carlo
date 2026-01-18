@@ -102,7 +102,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         tollExitStation: t.toll_exit_station,
         tollAmount: t.toll_amount ? parseFloat(t.toll_amount) : undefined,
         hasMeal: t.has_meal || false,
-        mealType: t.meal_type
+        mealType: t.meal_type,
+        mealAmount: t.meal_amount ? parseFloat(t.meal_amount) : undefined
       }));
 
       const distancesMap = new Map<string, RouteDistance[]>();
@@ -297,7 +298,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         toll_exit_station: trip.tollExitStation,
         toll_amount: trip.tollAmount,
         has_meal: trip.hasMeal || false,
-        meal_type: trip.mealType
+        meal_type: trip.mealType,
+        meal_amount: trip.mealAmount
       }])
       .select()
       .single();
@@ -328,7 +330,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         tollExitStation: data.toll_exit_station,
         tollAmount: data.toll_amount ? parseFloat(data.toll_amount) : undefined,
         hasMeal: data.has_meal || false,
-        mealType: data.meal_type
+        mealType: data.meal_type,
+        mealAmount: data.meal_amount ? parseFloat(data.meal_amount) : undefined
       }, ...prev.trips]
     }));
   };
@@ -353,7 +356,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         toll_exit_station: trip.tollExitStation,
         toll_amount: trip.tollAmount,
         has_meal: trip.hasMeal || false,
-        meal_type: trip.mealType
+        meal_type: trip.mealType,
+        meal_amount: trip.mealAmount
       })
       .eq('id', trip.id);
 
@@ -681,7 +685,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     let totalDistance = 0;
     let totalReimbursement = 0;
     let totalTollFees = 0;
-    let totalMealCount = 0;
+    let totalMealReimbursement = 0;
 
     personTrips.forEach(trip => {
       const vehicle = state.vehicles.find(v => v.id === trip.vehicleId);
@@ -696,8 +700,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         totalTollFees += tollAmount;
       }
 
-      if (trip.hasMeal) {
-        totalMealCount += 1;
+      if (trip.hasMeal && trip.mealAmount) {
+        totalMealReimbursement += trip.mealAmount;
       }
     });
 
@@ -709,7 +713,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       totalDistance,
       totalReimbursement,
       totalTollFees,
-      totalMealCount
+      totalMealReimbursement
     };
   };
 

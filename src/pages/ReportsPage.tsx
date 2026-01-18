@@ -60,7 +60,7 @@ const ReportsPage: React.FC = () => {
       let totalDistance = 0;
       let totalReimbursement = 0;
       let totalTollFees = 0;
-      let totalMealCount = 0;
+      let totalMealReimbursement = 0;
 
       filteredTrips.forEach(trip => {
         const vehicle = getVehicle(trip.vehicleId);
@@ -75,8 +75,8 @@ const ReportsPage: React.FC = () => {
           totalTollFees += tollAmount;
         }
 
-        if (trip.hasMeal) {
-          totalMealCount += 1;
+        if (trip.hasMeal && trip.mealAmount) {
+          totalMealReimbursement += trip.mealAmount;
         }
       });
 
@@ -86,7 +86,7 @@ const ReportsPage: React.FC = () => {
         totalDistance,
         totalReimbursement,
         totalTollFees,
-        totalMealCount
+        totalMealReimbursement
       };
     }
 
@@ -181,8 +181,14 @@ const ReportsPage: React.FC = () => {
       key: 'meal',
       header: 'Vitto',
       render: (trip: Trip) => {
-        if (trip.hasMeal && trip.mealType) {
-          return <span className="font-medium text-green-700">{trip.mealType === 'pranzo' ? 'Pranzo' : 'Cena'}</span>;
+        if (trip.hasMeal && trip.mealType && trip.mealAmount) {
+          const mealLabel = trip.mealType === 'pranzo' ? 'Pranzo' : 'Cena';
+          return (
+            <div className="flex flex-col">
+              <span className="font-medium text-green-700">{trip.mealAmount.toFixed(2)} €</span>
+              <span className="text-xs text-gray-500">({mealLabel})</span>
+            </div>
+          );
         }
         return <span className="text-gray-400">-</span>;
       },
@@ -382,7 +388,7 @@ const ReportsPage: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-medium text-gray-700">Rimborsi Vitto</h3>
                     <p className="text-lg font-semibold text-gray-900">
-                      {report.totalMealCount} pasti
+                      {report.totalMealReimbursement.toFixed(2)} €
                     </p>
                   </div>
                 </div>
@@ -397,11 +403,11 @@ const ReportsPage: React.FC = () => {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-gray-700">Totale Generale</h3>
-                    <p className="text-xs text-gray-600">Rimborso Chilometrico + Pedaggi</p>
+                    <p className="text-xs text-gray-600">Rimborso Chilometrico + Pedaggi + Vitto</p>
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-purple-900">
-                  {(report.totalReimbursement + report.totalTollFees).toFixed(2)} €
+                  {(report.totalReimbursement + report.totalTollFees + report.totalMealReimbursement).toFixed(2)} €
                 </p>
               </div>
             </div>

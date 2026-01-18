@@ -64,9 +64,9 @@ export const generatePDF = (
   doc.text(`Totale Kilometri: ${report.totalDistance.toFixed(1)} km`, 18, 100);
   doc.text(`Rimborso Chilometrico: ${report.totalReimbursement.toFixed(2)} €`, 18, 108);
   doc.text(`Pedaggi Autostradali: ${report.totalTollFees.toFixed(2)} €`, 120, 100);
-  doc.text(`Rimborsi Vitto: ${report.totalMealCount} pasti`, 120, 92);
+  doc.text(`Rimborsi Vitto: ${report.totalMealReimbursement.toFixed(2)} €`, 120, 92);
   doc.setFont(undefined, 'bold');
-  doc.text(`TOTALE GENERALE: ${(report.totalReimbursement + report.totalTollFees).toFixed(2)} €`, 18, 115);
+  doc.text(`TOTALE GENERALE: ${(report.totalReimbursement + report.totalTollFees + report.totalMealReimbursement).toFixed(2)} €`, 18, 115);
   doc.setFont(undefined, 'normal');
   
   // Format date for display
@@ -102,11 +102,12 @@ export const generatePDF = (
         ? (trip.isRoundTrip ? trip.tollAmount * 2 : trip.tollAmount)
         : 0;
 
-      const mealLabel = trip.hasMeal
-        ? (trip.mealType === 'pranzo' ? 'Pranzo' : 'Cena')
+      const meal = (trip.hasMeal && trip.mealAmount) ? trip.mealAmount : 0;
+      const mealLabel = trip.hasMeal && trip.mealAmount
+        ? `${trip.mealAmount.toFixed(2)} € (${trip.mealType === 'pranzo' ? 'Pranzo' : 'Cena'})`
         : '-';
 
-      const total = reimbursement + toll;
+      const total = reimbursement + toll + meal;
 
       return [
         formatDate(trip.date),

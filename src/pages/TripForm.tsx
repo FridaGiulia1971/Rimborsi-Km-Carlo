@@ -32,6 +32,7 @@ interface FormData {
   tollAmount: string;
   hasMeal: boolean;
   mealType: 'pranzo' | 'cena';
+  mealAmount: string;
 }
 
 interface FormErrors {
@@ -86,6 +87,7 @@ const TripForm: React.FC = () => {
     tollAmount: '',
     hasMeal: false,
     mealType: 'pranzo',
+    mealAmount: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -134,6 +136,7 @@ const TripForm: React.FC = () => {
         tollAmount: trip.tollAmount ? trip.tollAmount.toString() : '',
         hasMeal: trip.hasMeal || false,
         mealType: trip.mealType || 'pranzo',
+        mealAmount: trip.mealAmount ? trip.mealAmount.toString() : '',
       });
     }
   }, [trip]);
@@ -188,6 +191,7 @@ const TripForm: React.FC = () => {
         tollAmount: duplicateData.tollAmount ? duplicateData.tollAmount.toString() : '',
         hasMeal: duplicateData.hasMeal || false,
         mealType: duplicateData.mealType || 'pranzo',
+        mealAmount: duplicateData.mealAmount ? duplicateData.mealAmount.toString() : '',
       });
     }
   }, [isDuplicating]);
@@ -211,7 +215,7 @@ const TripForm: React.FC = () => {
   useEffect(() => {
     calculateReimbursement();
     calculateTollAmount();
-  }, [formData.distance, formData.vehicleId, formData.isRoundTrip, formData.tollAmount, formData.hasToll]);
+  }, [formData.distance, formData.vehicleId, formData.isRoundTrip, formData.tollAmount, formData.hasToll, formData.mealAmount, formData.hasMeal]);
 
   const calculateReimbursement = () => {
     if (!formData.vehicleId || !formData.distance) {
@@ -480,6 +484,7 @@ const TripForm: React.FC = () => {
       tollAmount: formData.hasToll && formData.tollAmount ? parseFloat(formData.tollAmount) : undefined,
       hasMeal: formData.hasMeal,
       mealType: formData.hasMeal ? formData.mealType : undefined,
+      mealAmount: formData.hasMeal && formData.mealAmount ? parseFloat(formData.mealAmount) : undefined,
     };
 
     if (isEditing && trip) {
@@ -908,18 +913,32 @@ const TripForm: React.FC = () => {
 
             {formData.hasMeal && (
               <div className="space-y-3">
-                <Select
-                  id="mealType"
-                  name="mealType"
-                  label="Tipo di pasto"
-                  options={[
-                    { value: 'pranzo', label: 'Pranzo' },
-                    { value: 'cena', label: 'Cena' }
-                  ]}
-                  value={formData.mealType}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Select
+                    id="mealType"
+                    name="mealType"
+                    label="Tipo di pasto"
+                    options={[
+                      { value: 'pranzo', label: 'Pranzo' },
+                      { value: 'cena', label: 'Cena' }
+                    ]}
+                    value={formData.mealType}
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    id="mealAmount"
+                    name="mealAmount"
+                    label="Importo Rimborso Vitto (€)"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.mealAmount}
+                    onChange={handleChange}
+                    placeholder="es. 15.00"
+                    required
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -959,10 +978,24 @@ const TripForm: React.FC = () => {
                       </>
                     )}
 
+                    {formData.hasMeal && formData.mealAmount && parseFloat(formData.mealAmount) > 0 && (
+                      <>
+                        <div className="border-t border-primary-200 pt-2 flex justify-between items-center">
+                          <span className="text-sm text-primary-700">Rimborso Vitto:</span>
+                          <span className="text-lg font-semibold text-primary-900">
+                            {parseFloat(formData.mealAmount).toFixed(2)} €
+                          </span>
+                        </div>
+                        <p className="text-xs text-primary-600">
+                          {formData.mealType === 'pranzo' ? 'Pranzo' : 'Cena'}
+                        </p>
+                      </>
+                    )}
+
                     <div className="border-t-2 border-primary-300 pt-2 mt-2 flex justify-between items-center">
                       <span className="text-sm font-medium text-primary-800">Totale Generale:</span>
                       <span className="text-xl font-bold text-primary-900">
-                        {(reimbursement + (tollAmount || 0)).toFixed(2)} €
+                        {(reimbursement + (tollAmount || 0) + (formData.hasMeal && formData.mealAmount ? parseFloat(formData.mealAmount) : 0)).toFixed(2)} €
                       </span>
                     </div>
                   </div>
