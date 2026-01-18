@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Map, BarChart3, Route } from 'lucide-react';
+import { Users, Map, BarChart3, Route, Plus, ArrowRight } from 'lucide-react';
 import Card from '../components/Card';
 import { useAppContext } from '../context/AppContext';
 
@@ -57,6 +57,30 @@ const HomePage: React.FC = () => {
           Istituto Veneto di Terapia Familiare
         </p>
       </div>
+
+      <Link
+        to="/tragitti/nuovo"
+        className="block group"
+      >
+        <div className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl shadow-xl p-8 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center space-x-6">
+              <div className="bg-white/20 backdrop-blur-sm p-5 rounded-2xl">
+                <Plus size={48} className="text-white" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-3xl font-bold mb-2">Inserisci Nuovo Rimborso</h2>
+                <p className="text-amber-50 text-lg">
+                  Registra un nuovo viaggio e calcola automaticamente il rimborso chilometrico
+                </p>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full group-hover:bg-white/30 transition-colors">
+              <ArrowRight size={32} className="text-white" />
+            </div>
+          </div>
+        </div>
+      </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (

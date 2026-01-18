@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Users, Map, BarChart3, Menu, X, Route, LogOut } from 'lucide-react';
+import { Home, Users, Map, BarChart3, Menu, X, Route, LogOut, Plus } from 'lucide-react';
 import { useState } from 'react';
 import classNames from 'classnames';
 import { useAuth } from '../context/AuthContext';
@@ -49,61 +49,86 @@ const Layout: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
       <header className="bg-teal-700 text-white shadow-md">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img
-              src="/logo.jpg"
-              alt="ITFV Logo"
-              className="h-12 w-auto object-contain"
-            />
-            <div className="flex flex-col">
-              <span className="hidden md:inline-block text-sm leading-tight">Rimborsi Chilometrici</span>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl md:text-2xl font-bold">ITFV Rimborsi Spese</h1>
+              <Link
+                to="/tragitti/nuovo"
+                className="hidden lg:flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-5 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+              >
+                <Plus size={20} />
+                <span>Nuovo Rimborso</span>
+              </Link>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Link
+                to="/tragitti/nuovo"
+                className="lg:hidden flex items-center space-x-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-3 rounded-lg shadow-lg transition-all"
+              >
+                <Plus size={18} />
+                <span className="hidden sm:inline">Nuovo</span>
+              </Link>
+
+              <button
+                className="md:hidden p-2 hover:bg-teal-600 rounded-lg transition-colors"
+                onClick={toggleMenu}
+                aria-label={menuOpen ? "Chiudi menu" : "Apri menu"}
+              >
+                {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+
+              <nav className="hidden md:flex items-center space-x-4">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={classNames(
+                      "flex items-center space-x-1 py-2 px-3 rounded-md transition-colors text-sm",
+                      {
+                        "bg-teal-600 text-white": isActive(item.path),
+                        "hover:bg-teal-600/60": !isActive(item.path)
+                      }
+                    )}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
+                {user && (
+                  <>
+                    <span className="text-white text-sm px-2 border-l border-teal-500 ml-2">{user.email}</span>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center space-x-1 py-2 px-3 rounded-md transition-colors hover:bg-teal-600/60 text-sm"
+                    >
+                      <LogOut size={18} />
+                      <span>Logout</span>
+                    </button>
+                  </>
+                )}
+              </nav>
             </div>
           </div>
-          <button 
-            className="md:hidden p-2" 
-            onClick={toggleMenu}
-            aria-label={menuOpen ? "Chiudi menu" : "Apri menu"}
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <nav className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={classNames(
-                  "flex items-center space-x-1 py-2 px-3 rounded-md transition-colors",
-                  {
-                    "bg-teal-600 text-white": isActive(item.path),
-                    "hover:bg-teal-600/60": !isActive(item.path)
-                  }
-                )}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
-            {user && (
-              <>
-                <span className="text-white text-sm px-3">{user.email}</span>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 py-2 px-3 rounded-md transition-colors text-red-500 hover:bg-red-50 hover:text-red-600"
-                >
-                  <LogOut size={20} />
-                  <span>Logout</span>
-                </button>
-              </>
-            )}
-          </nav>
         </div>
       </header>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white shadow-lg absolute top-14 right-0 left-0 z-50 transition-all">
+        <div className="md:hidden bg-white shadow-lg absolute top-20 right-0 left-0 z-50 transition-all">
           <nav className="flex flex-col p-4">
+            <Link
+              to="/tragitti/nuovo"
+              className="flex items-center justify-center space-x-3 py-4 px-4 mb-4 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-lg shadow-lg transition-all"
+              onClick={closeMenu}
+            >
+              <Plus size={24} />
+              <span>Nuovo Rimborso</span>
+            </Link>
+
+            <div className="border-t border-gray-200 mb-2"></div>
+
             {navItems.map((item) => (
               <Link
                 key={item.path}
